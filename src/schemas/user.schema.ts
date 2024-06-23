@@ -1,13 +1,6 @@
 import { z } from "zod";
 import { Enterprises } from "../common/constants.js";
-
-const S = z.string().default("");
-export const EnterpriceFields = z
-	.object({
-		username: S,
-		password: S,
-	})
-	.default({});
+import { EnterpriseFields } from "./enterpriseFields.schema.js";
 
 /**
  *  TODO: fix this.
@@ -15,10 +8,10 @@ export const EnterpriceFields = z
  */
 export const UserFileSchema = z
 	.object({
-		[Enterprises.Aysa]: EnterpriceFields,
-		[Enterprises.Edesur]: EnterpriceFields,
+		[Enterprises.Aysa]: EnterpriseFields,
+		[Enterprises.Edesur]: EnterpriseFields,
+		[Enterprises.Telecentro]: EnterpriseFields,
 	})
 	.default({});
 
 export type IUserInfoFile = z.TypeOf<typeof UserFileSchema>;
-export type IEnterpriseFields = z.TypeOf<typeof EnterpriceFields>;

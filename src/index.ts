@@ -1,36 +1,27 @@
 #!/usr/bin/env node
-import { input } from "@inquirer/prompts";
-import { chromium, webkit } from "@playwright/test";
-import {
-	Enterprises,
-	LoginFields,
-	EnterprisePages,
-	UserJsonPath,
-	IEnterprises,
-} from "./common/constants.js";
-import { goToUserPage, validateBaseFile } from "./sequence.js";
-import { UserState } from "./common/states.js";
+import { editUser } from "./prompts/editUser.js";
+import { validateBaseFile } from "./sequence.js";
 
-const data = await validateBaseFile();
+const userData = await validateBaseFile();
 
-for (const [enterprise, fields] of Object.entries(data)) {
-	UserState.set(enterprise as IEnterprises, fields);
-}
+await editUser(userData);
 
-const browser = await chromium.launch({ headless: false });
+// const browser = await chromium.launch({ headless: false });
+// const ctx = await browser.newContext();
 
-const ctx = await browser.newContext();
+// const promises = await Promise.allSettled([
+// 	await goToUserPage(await ctx.newPage(), Enterprises.Aysa),
+// 	await goToUserPage(await ctx.newPage(), Enterprises.Edesur),
+// 	await goToUserPage(await ctx.newPage(), Enterprises.Telecentro),
+// ]);
 
-const promises = await Promise.allSettled([
-	await goToUserPage(await ctx.newPage(), Enterprises.Aysa),
-	await goToUserPage(await ctx.newPage(), Enterprises.Edesur),
-	await goToUserPage(await ctx.newPage(), Enterprises.Telecentro),
-]);
+// for (const prom of promises) {
+// 	if (prom.status !== "fulfilled") break;
+// 	const { name, page } = prom.value;
+// 	AvailableWebs.set(name, page);
+// }
 
-for (const prom of promises) {
-	if (prom.status !== "fulfilled") break;
-	// prom.value.
-}
+// await operateOn();
 
 // console.log(pages.map(x=> x.));
 

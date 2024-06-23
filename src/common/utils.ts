@@ -1,11 +1,6 @@
+import { Separator } from "@inquirer/select";
 import { z } from "zod";
-import { IEnterprises } from "./constants.js";
-import { IEnterpriseFields } from "../schemas/user.schema.js";
-
-/**
- *  Abbreviation fro querySelector
- */
-export const $ = <T>(selector: string) => document.querySelector(selector) as T;
+import { EnterpriseFields } from "../schemas/enterpriseFields.schema.js";
 
 /**
  *  @link https://github.com/colinhacks/zod/discussions/1953#discussioncomment-4811588
@@ -21,3 +16,20 @@ export function getDefaultZodSchema<Schema extends z.AnyZodObject>(
 		})
 	);
 }
+
+/**
+ * 	Explicity handles throws inside of other apis
+ */
+export async function explicitReject(cb: () => Promise<void>, reason: string) {
+	try {
+		await cb();
+	} catch (_) {
+		Promise.reject(reason);
+	}
+}
+
+export const defaultSeparator = new Separator("-----------------");
+
+export const requiredFieldAmount = Object.keys(
+	getDefaultZodSchema(EnterpriseFields)
+).length;
