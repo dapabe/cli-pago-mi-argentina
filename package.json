@@ -1,0 +1,24 @@
+{
+	"name": "cli-pago-mi-argentina",
+	"version": "1.0.0",
+	"description": "",
+	"type": "module",
+	"main": "./src/index.ts",
+	"scripts": {
+		"start": "pnpm dlx tsx src/index.ts"
+	},
+	"keywords": [],
+	"bin": "./index.js",
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@playwright/test": "^1.44.1",
+		"@types/node": "^20.14.8",
+		"tsx": "^4.15.7",
+		"typescript": "^5.5.2"
+	},
+	"dependencies": {
+		"@inquirer/prompts": "5.0.6",
+		"zod": "3.23.8"
+	}
+}
