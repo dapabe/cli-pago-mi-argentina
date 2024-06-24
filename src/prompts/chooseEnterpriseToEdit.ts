@@ -1,0 +1,35 @@
+import { select } from "@inquirer/prompts";
+import { IEnterprises, IUserAction } from "../common/types.js";
+import { defaultSeparator, requiredFieldAmount } from "../common/utils.js";
+import { IUserInfoFile } from "../schemas/user.schema.js";
+
+export async function chooseEnterpriseToEdit(userData: IUserInfoFile) {
+	return select<Extract<IUserAction, "exit"> | IEnterprises>({
+		message: "Editar tu información de usuario en:",
+		default: "exit",
+		choices: [
+			{
+				name: "Volver",
+				value: "exit",
+				description:
+					"No editar nada y continuar - Las paginas sin usuario no estaran disponible para navegar",
+			},
+			defaultSeparator,
+			...Object.entries(userData.enterprises).map(([key, fields]) => {
+				const fieldAmount = Object.values(fields).filter(
+					(x) => x.length
+				).length;
+				return {
+					name: `${key} - [${fieldAmount}/${requiredFieldAmount}] ${
+						fieldAmount !== requiredFieldAmount
+							? "Rellene campos faltantes"
+							: ""
+					}`,
+					value: key as IEnterprises,
+					description: `Editar usuario de '${key}'`,
+				};
+			}),
+			defaultSeparator,
+		],
+	});
+}

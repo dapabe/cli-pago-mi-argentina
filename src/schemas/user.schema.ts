@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Enterprises } from "../common/constants.js";
-import { EnterpriseFields } from "./enterpriseFields.schema.js";
+import { UserEnterprisesFieldsSchema } from "./enterpriseFields.schema.js";
 
 /**
  *  TODO: fix this.
@@ -8,9 +8,10 @@ import { EnterpriseFields } from "./enterpriseFields.schema.js";
  */
 export const UserFileSchema = z
 	.object({
-		[Enterprises.Aysa]: EnterpriseFields,
-		[Enterprises.Edesur]: EnterpriseFields,
-		[Enterprises.Telecentro]: EnterpriseFields,
+		// @ts-ignore fix `default({})` typo
+		enterprises: UserEnterprisesFieldsSchema,
+		selectedEnterprises: z.nativeEnum(Enterprises).array().default([]),
+		// payMethods:
 	})
 	.default({});
 

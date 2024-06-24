@@ -1,6 +1,5 @@
 import { Separator } from "@inquirer/select";
 import { z } from "zod";
-import { EnterpriseFields } from "../schemas/enterpriseFields.schema.js";
 
 /**
  *  @link https://github.com/colinhacks/zod/discussions/1953#discussioncomment-4811588
@@ -30,6 +29,10 @@ export async function explicitReject(cb: () => Promise<void>, reason: string) {
 
 export const defaultSeparator = new Separator("-----------------");
 
-export const requiredFieldAmount = Object.keys(
-	getDefaultZodSchema(EnterpriseFields)
-).length;
+// export const requiredFieldAmount = Object.keys(
+// 	getDefaultZodSchema(EnterpriseFields)
+// ).length;
+export const requiredFieldAmount = 2;
+
+export const sleep = async (ms: number = 2000) =>
+	new Promise((_) => setTimeout(_, ms));

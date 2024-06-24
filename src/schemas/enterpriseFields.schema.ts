@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Enterprises } from "../common/constants.js";
 
 const S = z.string().default("");
 export const EnterpriseFields = z
@@ -8,4 +9,15 @@ export const EnterpriseFields = z
 	})
 	.default({});
 
+export const UserEnterprisesFieldsSchema = z
+	.object({
+		[Enterprises.Aysa]: EnterpriseFields,
+		[Enterprises.Edesur]: EnterpriseFields,
+		[Enterprises.Telecentro]: EnterpriseFields,
+	})
+	.default({});
+
 export type IEnterpriseFields = z.TypeOf<typeof EnterpriseFields>;
+export type IUserEnterprisesFields = z.TypeOf<
+	typeof UserEnterprisesFieldsSchema
+>;
