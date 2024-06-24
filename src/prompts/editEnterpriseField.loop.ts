@@ -1,9 +1,9 @@
-import { IUserInfoFile } from "../schemas/user.schema.js";
+import { IUserData } from "../schemas/userData.schema.js";
 import { chooseEnterpriseField } from "./chooseEnterpriseField.js";
 import { chooseEnterpriseToEdit } from "./chooseEnterpriseToEdit.js";
 import { modifyEnterpriseField } from "./modifyEnterpriseField.js";
 
-export async function editEnterpriseFieldLoop(userData: IUserInfoFile) {
+export async function editEnterpriseFieldLoop(userData: IUserData) {
 	const chosenEnterprise = await chooseEnterpriseToEdit(userData);
 
 	if (chosenEnterprise === "exit") return await Promise.resolve();

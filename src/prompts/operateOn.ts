@@ -4,11 +4,11 @@ import { createSpinner } from "nanospinner";
 import { Enterprises } from "../common/constants.js";
 import { IEnterprises } from "../common/types.js";
 import { defaultSeparator } from "../common/utils.js";
-import { IUserInfoFile } from "../schemas/user.schema.js";
+import { IUserData } from "../schemas/userData.schema.js";
 import { isPageAvailable } from "../sequence.js";
 
 export async function operateOn(
-	userData: IUserInfoFile,
+	userData: IUserData,
 	ctx: BrowserContext
 ): Promise<Page> {
 	const availableWebs = new Map<IEnterprises, Page | null>();

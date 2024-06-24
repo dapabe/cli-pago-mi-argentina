@@ -3,10 +3,10 @@ import { UserJsonPath } from "../common/constants.js";
 import { IEnterprises, IUserAction } from "../common/types.js";
 import { defaultSeparator } from "../common/utils.js";
 import { IEnterpriseFields } from "../schemas/enterpriseFields.schema.js";
-import { IUserInfoFile } from "../schemas/user.schema.js";
+import { IUserData } from "../schemas/userData.schema.js";
 
 export async function chooseEnterpriseField(
-	userData: IUserInfoFile,
+	userData: IUserData,
 	enterprise: IEnterprises
 ) {
 	const translatedInput = (field: string) =>

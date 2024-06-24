@@ -29,6 +29,9 @@ importers:
       zod:
         specifier: 3.23.8
         version: 3.23.8
+      zod-defaults:
+        specifier: 0.1.3
+        version: 0.1.3(zod@3.23.8)
     devDependencies:
       '@playwright/test':
         specifier: ^1.44.1
@@ -391,6 +394,11 @@ packages:
     resolution: {integrity: sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==}
     engines: {node: '>=8'}
 
+  zod-defaults@0.1.3:
+    resolution: {integrity: sha512-Cp4UjuVfXqwaOx8A5LlM0IRBZs8B7AXgF+XOZWF8CjMDhsY/Jki+y7VS4adVtQj9NNSsAPwylUlJp9INuxPEnA==}
+    peerDependencies:
+      zod: ^3.23.8
+
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
 
@@ -701,5 +709,9 @@ snapshots:
       ansi-styles: 4.3.0
       string-width: 4.2.3
       strip-ansi: 6.0.1
+
+  zod-defaults@0.1.3(zod@3.23.8):
+    dependencies:
+      zod: 3.23.8
 
   zod@3.23.8: {}

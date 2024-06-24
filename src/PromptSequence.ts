@@ -12,14 +12,14 @@ import { IEnterprises } from "./common/types.js";
 import { checkboxEnterprises } from "./prompts/checkboxEnterprises.js";
 import { chooseEditAction } from "./prompts/chooseEditAction.js";
 import { editEnterpriseFieldLoop } from "./prompts/editEnterpriseField.loop.js";
-import { IUserInfoFile, UserFileSchema } from "./schemas/user.schema.js";
+import { IUserData, UserDataSchema } from "./schemas/userData.schema.js";
 
 export class PromptSequence {
-	private static _DATA: IUserInfoFile;
-	private static set DATA(data: IUserInfoFile) {
+	private static _DATA: IUserData;
+	private static set DATA(data: IUserData) {
 		this._DATA = data;
 	}
-	private static get DATA(): IUserInfoFile {
+	private static get DATA(): IUserData {
 		return this._DATA;
 	}
 
@@ -49,7 +49,7 @@ export class PromptSequence {
 			spinner.update({
 				text: "Validando información del usuario.",
 			});
-			const parsedFile = UserFileSchema.parse(JSON.parse(stringFile));
+			const parsedFile = UserDataSchema.parse(JSON.parse(stringFile));
 
 			spinner.success({
 				text: "Datos validados correctamente.",
@@ -69,7 +69,7 @@ export class PromptSequence {
 		try {
 			await fs.writeFile(
 				UserJsonPath,
-				JSON.stringify(UserFileSchema.parse({}), null, 2)
+				JSON.stringify(UserDataSchema.parse({}), null, 2)
 			);
 			await this.validateBaseFile();
 		} catch (error) {

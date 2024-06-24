@@ -2,9 +2,9 @@ import { checkbox } from "@inquirer/prompts";
 import { Enterprises } from "../common/constants.js";
 import { IEnterprises } from "../common/types.js";
 import { defaultSeparator } from "../common/utils.js";
-import { IUserInfoFile } from "../schemas/user.schema.js";
+import { IUserData } from "../schemas/userData.schema.js";
 
-export async function checkboxEnterprises(userData: IUserInfoFile) {
+export async function checkboxEnterprises(userData: IUserData) {
 	const items = Object.values(Enterprises).map((x) => {
 		return {
 			name: x,

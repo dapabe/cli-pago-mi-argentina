@@ -1,9 +1,9 @@
 import { select } from "@inquirer/prompts";
 import { IEnterprises, IUserAction } from "../common/types.js";
 import { defaultSeparator, requiredFieldAmount } from "../common/utils.js";
-import { IUserInfoFile } from "../schemas/user.schema.js";
+import { IUserData } from "../schemas/userData.schema.js";
 
-export async function chooseEnterpriseToEdit(userData: IUserInfoFile) {
+export async function chooseEnterpriseToEdit(userData: IUserData) {
 	return select<Extract<IUserAction, "exit"> | IEnterprises>({
 		message: "Editar tu información de usuario en:",
 		default: "exit",

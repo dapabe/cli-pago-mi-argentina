@@ -9,13 +9,11 @@ export const EnterpriseFields = z
 	})
 	.default({});
 
-export const UserEnterprisesFieldsSchema = z
-	.object({
-		[Enterprises.Aysa]: EnterpriseFields,
-		[Enterprises.Edesur]: EnterpriseFields,
-		[Enterprises.Telecentro]: EnterpriseFields,
-	})
-	.default({});
+export const UserEnterprisesFieldsSchema = z.object({
+	[Enterprises.Aysa]: EnterpriseFields,
+	[Enterprises.Edesur]: EnterpriseFields,
+	[Enterprises.Telecentro]: EnterpriseFields,
+});
 
 export type IEnterpriseFields = z.TypeOf<typeof EnterpriseFields>;
 export type IUserEnterprisesFields = z.TypeOf<

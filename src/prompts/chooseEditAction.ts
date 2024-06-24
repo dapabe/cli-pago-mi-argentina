@@ -1,9 +1,9 @@
 import { select } from "@inquirer/prompts";
 import { IEditAction, IUserAction } from "../common/types.js";
 import { defaultSeparator } from "../common/utils.js";
-import { IUserInfoFile } from "../schemas/user.schema.js";
+import { IUserData } from "../schemas/userData.schema.js";
 
-export async function chooseEditAction(userData: IUserInfoFile) {
+export async function chooseEditAction(userData: IUserData) {
 	const noEnterprises = !userData.selectedEnterprises.length;
 
 	return select<Exclude<IUserAction, "back"> | IEditAction>({
