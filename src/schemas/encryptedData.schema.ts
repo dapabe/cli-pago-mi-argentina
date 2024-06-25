@@ -1,7 +1,9 @@
 import { z } from "zod";
+import { PasswordByteLength } from "../common/constants.js";
 
 export const EncryptedDataSchema = z.object({
-	iv: z.string(),
+	salt: z.string().length(PasswordByteLength),
+	iv: z.string().length(PasswordByteLength),
 	encryptedData: z.string(),
 });
 

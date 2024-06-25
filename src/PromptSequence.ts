@@ -2,16 +2,21 @@ import { Browser, BrowserContext, Page, chromium } from "@playwright/test";
 import chalk from "chalk";
 import { createSpinner } from "nanospinner";
 import fs from "node:fs/promises";
+import { getDefaultsForSchema } from "zod-defaults";
 import {
 	EnterprisePages,
 	LoginFields,
 	StepsToLogin,
 	UserJsonPath,
 } from "./common/constants.js";
+import { decryptData, encryptData } from "./common/crypto.js";
 import { IEnterprises } from "./common/types.js";
 import { checkboxEnterprises } from "./prompts/checkboxEnterprises.js";
 import { chooseEditAction } from "./prompts/chooseEditAction.js";
+import { decryptPrompt } from "./prompts/decrypt.prompt.js";
 import { editEnterpriseFieldLoop } from "./prompts/editEnterpriseField.loop.js";
+import { firstTimePrompt } from "./prompts/firstTime.prompt.js";
+import { EncryptedDataSchema } from "./schemas/encryptedData.schema.js";
 import { IUserData, UserDataSchema } from "./schemas/userData.schema.js";
 
 export class PromptSequence {
@@ -21,6 +26,14 @@ export class PromptSequence {
 	}
 	private static get DATA(): IUserData {
 		return this._DATA;
+	}
+
+	private static _PASS: string;
+	private static set PASS(s: string) {
+		this._PASS = s;
+	}
+	private static get PASS(): string {
+		return this._PASS;
 	}
 
 	private static _BROWSER?: Browser;
@@ -40,38 +53,54 @@ export class PromptSequence {
 	}
 
 	static async validateBaseFile(): Promise<void> {
-		const spinner = createSpinner(`Chequeando que '${UserJsonPath}' exista.`, {
-			color: "yellow",
-		}).start();
+		console.log(chalk.yellow(`Chequeando que '${UserJsonPath}' exista.`));
 		try {
 			const stringFile = await fs.readFile(UserJsonPath, "utf-8");
 
-			spinner.update({
-				text: "Validando información del usuario.",
-			});
-			const parsedFile = UserDataSchema.parse(JSON.parse(stringFile));
+			console.log(
+				chalk.yellow(`Validando que '${UserJsonPath}' sea correcto.`)
+			);
+			const parsedFile = EncryptedDataSchema.safeParse(JSON.parse(stringFile));
+			if (!parsedFile.success) {
+				console.log(
+					chalk.red(
+						`Los datos encriptados no son correctos, verifique que no los haya cambiado o tendra que borrar '${UserJsonPath}'`
+					)
+				);
+				process.exit(1);
+			}
+			const password = await decryptPrompt();
+			const decryptedData = decryptData(password, parsedFile.data);
+			this.PASS = password;
 
-			spinner.success({
-				text: "Datos validados correctamente.",
-			});
-			this.DATA = parsedFile;
+			const parsedData = UserDataSchema.safeParse(decryptedData);
+			if (!parsedData.success) {
+				console.log(
+					chalk.red("Las contraseñas no coinciden, reintentelo denuevo.")
+				);
+				return await this.validateBaseFile();
+			}
+			console.log(chalk.green("Datos validados correctamente."));
+			this.DATA = parsedData.data;
 		} catch (_) {
-			spinner.warn({
-				text: `El archivo '${UserJsonPath}' no se a encontrado o es invalido, recreando.`,
-			});
+			console.log(
+				chalk.yellow(
+					`El archivo '${UserJsonPath}' no se a encontrado o es invalido, recreando.`
+				)
+			);
 			await this.recreateBaseFile();
-		} finally {
-			spinner.stop();
+			await this.validateBaseFile();
 		}
 	}
 
 	private static async recreateBaseFile(): Promise<void> {
 		try {
-			await fs.writeFile(
-				UserJsonPath,
-				JSON.stringify(UserDataSchema.parse({}), null, 2)
+			const password = await firstTimePrompt();
+			const encryptedData = encryptData(
+				password,
+				getDefaultsForSchema(UserDataSchema)
 			);
-			await this.validateBaseFile();
+			await fs.writeFile(UserJsonPath, JSON.stringify(encryptedData));
 		} catch (error) {
 			console.log("Error creando archivo base: ", error);
 			process.exit(1);
@@ -189,7 +218,7 @@ export class PromptSequence {
 		try {
 			await fs.writeFile(
 				UserJsonPath,
-				JSON.stringify(this.DATA, null, 2),
+				JSON.stringify(encryptData(this.PASS, this.DATA)),
 				"utf-8"
 			);
 		} catch (error) {

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const MoneyCardSchema = z.object({
+export const PaymentMethodSchema = z.object({
 	// type: z.enum(["Visa","MasterCard"]),
 	fullname: z.string(),
 	number: z.number(),
@@ -8,4 +8,4 @@ export const MoneyCardSchema = z.object({
 	backNumber: z.number(),
 });
 
-export type IMoneyCard = z.TypeOf<typeof MoneyCardSchema>;
+export type IPaymentMethod = z.TypeOf<typeof PaymentMethodSchema>;
