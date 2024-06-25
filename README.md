@@ -55,4 +55,4 @@ Este proyecto toma la seguridad muy en serio. Las credenciales y otros datos sen
 
 ### Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
+Este proyecto está bajo la Licencia Apache 2.0. Ver el archivo [LICENSE](./LICENSE.txt) para más detalles.
