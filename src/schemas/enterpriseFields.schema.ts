@@ -2,12 +2,10 @@ import { z } from "zod";
 import { Enterprises } from "../common/constants.js";
 
 const S = z.string().default("");
-export const EnterpriseFields = z
-	.object({
-		username: S,
-		password: S,
-	})
-	.default({});
+export const EnterpriseFields = z.object({
+	username: S,
+	password: S,
+});
 
 export const UserEnterprisesFieldsSchema = z.object({
 	[Enterprises.Aysa]: EnterpriseFields,
