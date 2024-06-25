@@ -9,7 +9,7 @@ import {
 	StepsToLogin,
 	UserJsonPath,
 } from "./common/constants.js";
-import { decryptData, encryptData } from "./common/crypto.js";
+import { encryptData } from "./common/crypto.js";
 import { IEnterprises } from "./common/types.js";
 import { checkboxEnterprises } from "./prompts/checkboxEnterprises.js";
 import { chooseEditAction } from "./prompts/chooseEditAction.js";
@@ -69,8 +69,7 @@ export class PromptSequence {
 				);
 				process.exit(1);
 			}
-			const password = await decryptPrompt();
-			const decryptedData = decryptData(password, parsedFile.data);
+			const { password, decryptedData } = await decryptPrompt(parsedFile.data);
 			this.PASS = password;
 
 			const parsedData = UserDataSchema.safeParse(decryptedData);
@@ -133,7 +132,6 @@ export class PromptSequence {
 	}
 
 	static async checkUserPages(): Promise<void> {
-		// const spinner = createSpinner("Chequeando")
 		const currentSelection = this.DATA.selectedEnterprises.filter((x) =>
 			Object.values(this.DATA.enterprises[x]).every(Boolean)
 		);
