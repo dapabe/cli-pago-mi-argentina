@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Enterprises } from "../common/constants.js";
+import { Enterprises } from "../common/constants/enterprises.js";
 import { UserEnterprisesFieldsSchema } from "./enterpriseFields.schema.js";
 
 /**

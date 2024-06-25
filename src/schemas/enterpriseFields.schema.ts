@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Enterprises } from "../common/constants.js";
+import { Enterprises } from "../common/constants/enterprises.js";
 
 const S = z.string().default("");
 export const EnterpriseFields = z.object({
@@ -7,6 +7,10 @@ export const EnterpriseFields = z.object({
 	password: S,
 });
 
+/**
+ * 	Find a way to create this object exponentially as `Enterprises` \
+ * 	grows that is type safe.
+ */
 export const UserEnterprisesFieldsSchema = z.object({
 	[Enterprises.Aysa]: EnterpriseFields,
 	[Enterprises.Edesur]: EnterpriseFields,

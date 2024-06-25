@@ -3,13 +3,11 @@ import chalk from "chalk";
 import { createSpinner } from "nanospinner";
 import fs from "node:fs/promises";
 import { getDefaultsForSchema } from "zod-defaults";
-import {
-	EnterprisePages,
-	LoginFields,
-	StepsToLogin,
-	UserJsonPath,
-} from "./common/constants.js";
+import { EnterprisePages } from "./common/constants/enterprise-pages.js";
+import { LoginFields } from "./common/constants/login-fields.js";
+import { StepsToLogin } from "./common/constants/steps-to-login.js";
 import { encryptData } from "./common/crypto.js";
+import { UserJsonPath } from "./common/file.js";
 import { IEnterprises } from "./common/types.js";
 import { retrieveFromSelectedFilledForms } from "./common/utils.js";
 import { changePasswordPrompt } from "./prompts/changePassword.prompt.js";

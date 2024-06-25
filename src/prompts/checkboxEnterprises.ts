@@ -1,5 +1,5 @@
 import { checkbox } from "@inquirer/prompts";
-import { Enterprises } from "../common/constants.js";
+import { Enterprises } from "../common/file.js";
 import { IEnterprises } from "../common/types.js";
 import { defaultSeparator } from "../common/utils.js";
 import { IUserData } from "../schemas/userData.schema.js";

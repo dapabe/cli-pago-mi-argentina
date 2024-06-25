@@ -45,7 +45,7 @@ npx tsx src/index.ts
 
 ### Seguridad
 
-Este proyecto toma la seguridad muy en serio. Las credenciales y otros datos sensibles se almacenan en un archivo cifrado localmente en tu computadora. Asegúrate de mantener este archivo seguro y no compartirlo con nadie.
+Este proyecto toma la seguridad muy en serio. Las credenciales y otros datos sensibles se almacenan en un archivo encriptado localmente en tu computadora protegida por contraseña que tambien esta cifrada. Asegúrate de mantener este archivo seguro y no compartirlo con nadie.
 
 ### <enterprises> [[1]](#enterprises) Actualmente se soporta:
 
