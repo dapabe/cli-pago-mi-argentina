@@ -11,6 +11,8 @@ import {
 } from "./common/constants.js";
 import { encryptData } from "./common/crypto.js";
 import { IEnterprises } from "./common/types.js";
+import { retrieveFromSelectedFilledForms } from "./common/utils.js";
+import { changePasswordPrompt } from "./prompts/changePassword.prompt.js";
 import { checkboxEnterprises } from "./prompts/checkboxEnterprises.js";
 import { chooseEditAction } from "./prompts/chooseEditAction.js";
 import { decryptPrompt } from "./prompts/decrypt.prompt.js";
@@ -64,23 +66,17 @@ export class PromptSequence {
 			if (!parsedFile.success) {
 				console.log(
 					chalk.red(
-						`Los datos encriptados no son correctos, verifique que no los haya cambiado o tendra que borrar '${UserJsonPath}'`
+						`Los datos encriptados no son correctos, verifique que no los haya cambiado o tendra que borrar '${UserJsonPath}' \n`,
+						JSON.stringify(parsedFile.error.flatten().fieldErrors, null, 2)
 					)
 				);
 				process.exit(1);
 			}
-			const { password, decryptedData } = await decryptPrompt(parsedFile.data);
-			this.PASS = password;
-
-			const parsedData = UserDataSchema.safeParse(decryptedData);
-			if (!parsedData.success) {
-				console.log(
-					chalk.red("Las contraseñas no coinciden, reintentelo denuevo.")
-				);
-				return await this.validateBaseFile();
-			}
+			const { password, userData } = await decryptPrompt(parsedFile.data);
 			console.log(chalk.green("Datos validados correctamente."));
-			this.DATA = parsedData.data;
+
+			this.PASS = password;
+			this.DATA = userData;
 		} catch (_) {
 			console.log(
 				chalk.yellow(
@@ -112,7 +108,7 @@ export class PromptSequence {
 			switch (action) {
 				case "next":
 					return await Promise.resolve();
-				case "fields":
+				case "enterpriseFields":
 					await editEnterpriseFieldLoop(this.DATA);
 					await this.save();
 					return this.selectEditAction();
@@ -121,21 +117,29 @@ export class PromptSequence {
 					this.DATA.selectedEnterprises = checkedEnterprises;
 					await this.save();
 					return await this.selectEditAction();
-				case "moneyCard":
-					return await Promise.reject();
+				// case "paymentMethods":
+				// 	return await Promise.reject();
+				case "password":
+					const newPass = await changePasswordPrompt(this.PASS);
+					this.PASS = newPass;
+					await this.save();
+					return await this.selectEditAction();
 				default:
-					return await this.terminateProgram();
+					this.displayGoodbye();
+					return await this.terminateProgram(0);
 			}
 		} catch (error) {
-			console.log(error);
+			console.log(chalk.red(error));
+			await this.terminateProgram(1);
 		}
 	}
 
 	static async checkUserPages(): Promise<void> {
-		const currentSelection = this.DATA.selectedEnterprises.filter((x) =>
-			Object.values(this.DATA.enterprises[x]).every(Boolean)
-		);
+		const currentSelection = retrieveFromSelectedFilledForms(this.DATA);
 		try {
+			if (!currentSelection.length)
+				await Promise.reject("No has seleccionado empresas.");
+
 			this.BROWSER = await chromium.launch({ headless: false });
 			this.CTX = await this.BROWSER.newContext();
 			for await (const selectedWeb of currentSelection) {
@@ -144,7 +148,10 @@ export class PromptSequence {
 					await this.navigateToDashboard(page, selectedWeb);
 				}
 			}
-		} catch (error) {}
+		} catch (error) {
+			console.log(chalk.red(error));
+			await this.terminateProgram(1);
+		}
 	}
 
 	private static async isPageAvailable(
@@ -186,7 +193,7 @@ export class PromptSequence {
 			color: "yellow",
 		});
 		const field = LoginFields[enterprise];
-		const fieldData = this.DATA.enterprises[enterprise];
+		const fieldData = this.DATA.enterpriseFields[enterprise];
 
 		try {
 			const userInput = page.locator(field.username);
@@ -206,7 +213,7 @@ export class PromptSequence {
 				mark: ":(",
 			});
 			console.log(error);
-			process.exit(1);
+			await this.terminateProgram(1);
 		} finally {
 			spinner.clear();
 		}
@@ -221,17 +228,20 @@ export class PromptSequence {
 			);
 		} catch (error) {
 			console.log("Error al guardar ", error);
-			process.exit(1);
+			await this.terminateProgram(1);
 		}
 	}
 
-	static async terminateProgram() {
+	private static async terminateProgram(code: 0 | 1) {
+		if (this.CTX) await this.CTX.close();
+		process.exit(code);
+	}
+
+	private static displayGoodbye() {
 		console.log(
 			chalk.green(
 				"Gracias por usar esta herramienta, considera hacer un aporte 😊"
 			)
 		);
-		if (this.CTX) await this.CTX.close();
-		process.exit(0);
 	}
 }

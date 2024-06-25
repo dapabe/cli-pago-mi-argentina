@@ -1,9 +1,5 @@
 import { IEnterprises } from "./types.js";
 
-/**
- *	Password length in bytes (AES-256)
- */
-export const PasswordByteLength = 32;
 export const UserJsonPath = "info.json";
 
 /**

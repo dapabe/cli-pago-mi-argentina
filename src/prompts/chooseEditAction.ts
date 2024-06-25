@@ -6,15 +6,19 @@ import { IUserData } from "../schemas/userData.schema.js";
 export async function chooseEditAction(userData: IUserData) {
 	const noEnterprises = !userData.selectedEnterprises.length;
 
-	return select<Exclude<IUserAction, "back"> | IEditAction>({
+	return select<Exclude<IUserAction, "back"> | IEditAction | "password">({
 		message: "¿Qué quieres hacer?",
 		default: "next",
 		choices: [
 			{
 				name: "Siguiente",
 				value: "next",
-				description: "Ver mi lista de empresas.",
+				description: "Ver que empresas opero.",
 				disabled: noEnterprises,
+			},
+			{
+				name: "Cambiar contraseña",
+				value: "password",
 			},
 			{
 				name: "Salir",
@@ -25,18 +29,19 @@ export async function chooseEditAction(userData: IUserData) {
 			{
 				name: "Listar mis empresas",
 				value: "selectedEnterprises",
-				description: "Añade o elimina que empresa utilices.",
+				description: "Añade o elimina servicios que utilices.",
 			},
 			{
-				name: "Datos de usuarios",
-				value: "fields",
-				description: "Modifica los campos de inicio de sesión de tus empresas.",
+				name: "Mis datos",
+				value: "enterpriseFields",
+				description:
+					"Modifica los campos de inicio de sesión de servicios que uses.",
 			},
-			{
-				name: "Metodos de pago",
-				value: "moneyCard",
-				description: "Modifica tus metodos de pago",
-			},
+			// {
+			// 	name: "Metodos de pago",
+			// 	value: "paymentMethods",
+			// 	description: "Modifica tus metodos de pago",
+			// },
 			defaultSeparator,
 		],
 	});

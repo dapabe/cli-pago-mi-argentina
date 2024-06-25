@@ -1,53 +1,42 @@
-import crypto from "node:crypto";
+import CryptoJS from "crypto-js";
+import nCrypto from "node:crypto";
+import pkg from "../../package.json";
 import { IEncryptedData } from "../schemas/encryptedData.schema.js";
-import { IUserData, UserDataSchema } from "../schemas/userData.schema.js";
-import { PasswordByteLength } from "./constants.js";
+import { IUserData } from "../schemas/userData.schema.js";
 
-export function encryptData(
-	password: string,
-	userData: IUserData
-): IEncryptedData {
-	const salt = crypto.randomBytes(16).toString("hex");
-	const derivedKey = generateDerivedKey(password, salt);
+export function encryptData(password: string, data: object): IEncryptedData {
+	const salt = CryptoJS.lib.WordArray.random(16).toString();
+	const derivedKey = createDerivedKey(password, salt);
 
-	const iv = crypto.randomBytes(16);
-	const stringData = JSON.stringify(userData);
-	const cipher = crypto.createCipheriv("aes-256-cbc", derivedKey, iv);
-
-	let encrypted = cipher.update(stringData, "utf-8", "hex");
-	encrypted += cipher.final("hex");
+	const ciphertext = CryptoJS.AES.encrypt(
+		JSON.stringify(data),
+		derivedKey
+	).toString();
 
 	return {
 		salt,
-		iv: iv.toString("hex"),
-		encryptedData: encrypted,
+		version: pkg.version,
+		encryptedData: ciphertext,
 	};
 }
 
-export function decryptData(password: string, data: IEncryptedData): IUserData {
-	const derivedKey = generateDerivedKey(password, data.salt);
+export function decryptData(
+	password: string,
+	data: IEncryptedData
+): IUserData | null {
+	try {
+		const derivedKey = createDerivedKey(password, data.salt);
+		const bytes = CryptoJS.AES.decrypt(data.encryptedData, derivedKey);
+		const text = bytes.toString(CryptoJS.enc.Utf8);
 
-	const iv = Buffer.from(data.iv, "hex");
-	const encryptedText = data.encryptedData;
-
-	const decipher = crypto.createDecipheriv("aes-256-cbc", derivedKey, iv);
-
-	let decrypted = decipher.update(encryptedText, "hex", "utf-8");
-	decrypted += decipher.final("utf-8");
-
-	return UserDataSchema.parse(JSON.parse(decrypted));
+		return JSON.parse(text);
+	} catch (_) {
+		return null;
+	}
 }
-/**
- * 	Password-Based Key Derivation Function 2
- */
-function generateDerivedKey(pass: string, salt: string): Buffer {
-	const iterations = 100000; // Number of iterations
 
-	return crypto.pbkdf2Sync(
-		pass,
-		salt,
-		iterations,
-		PasswordByteLength,
-		"sha512"
-	);
+function createDerivedKey(password: string, salt: string) {
+	return nCrypto
+		.pbkdf2Sync(password, salt, 10000, 32, "sha512")
+		.toString("hex");
 }

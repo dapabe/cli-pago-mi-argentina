@@ -19,7 +19,7 @@ export async function chooseEnterpriseField(
 				value: "exit",
 			},
 			defaultSeparator,
-			...Object.entries(userData.enterprises[enterprise]).map(
+			...Object.entries(userData.enterpriseFields[enterprise]).map(
 				([field, value]) => ({
 					name: `${translatedInput(field)} - [${
 						!value.length ? "Vacio" : "*****"

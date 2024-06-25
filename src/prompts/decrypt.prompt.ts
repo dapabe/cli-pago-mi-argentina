@@ -1,11 +1,13 @@
 import { password } from "@inquirer/prompts";
+import chalk from "chalk";
 import { decryptData } from "../common/crypto.js";
 import { IEncryptedData } from "../schemas/encryptedData.schema.js";
+import { IUserData, UserDataSchema } from "../schemas/userData.schema.js";
 
 export async function decryptPrompt(
 	encryptedData: IEncryptedData,
 	attempt = 0
-) {
+): Promise<{ password: string; userData: IUserData }> {
 	try {
 		const answer = await password({
 			message: attempt
@@ -13,15 +15,26 @@ export async function decryptPrompt(
 				: "Escribe tu contraseña para desbloquear tus datos encriptados.",
 		});
 
-		return {
-			password: answer,
-			decryptedData: decryptData(answer, encryptedData),
-		};
-	} catch (error) {
-		if ((error as any).code === "ERR_OSSL_BAD_DECRYPT") {
-			return decryptPrompt(encryptedData, ++attempt);
-		} else {
+		const decryptedData = decryptData(answer, encryptedData);
+		if (!decryptedData) return await decryptPrompt(encryptedData, ++attempt);
+
+		const parsedData = UserDataSchema.safeParse(decryptedData);
+		if (!parsedData.success) {
+			console.log(
+				chalk.red(
+					"La estructura de datos almacenada no es correcta \n",
+					JSON.stringify(parsedData.error.flatten().fieldErrors)
+				)
+			);
 			process.exit(1);
 		}
+
+		return {
+			password: answer,
+			userData: parsedData.data,
+		};
+	} catch (error) {
+		console.log(error);
+		process.exit(1);
 	}
 }

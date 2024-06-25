@@ -20,6 +20,6 @@ export async function editEnterpriseFieldLoop(userData: IUserData) {
 		chosenEnterprise
 	);
 
-	userData.enterprises[chosenEnterprise][enterpriseFieldData] = data;
+	userData.enterpriseFields[chosenEnterprise][enterpriseFieldData] = data;
 	return await editEnterpriseFieldLoop(userData);
 }

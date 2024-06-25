@@ -15,7 +15,7 @@ export async function chooseEnterpriseToEdit(userData: IUserData) {
 					"No editar nada y continuar - Las paginas sin usuario no estaran disponible para navegar",
 			},
 			defaultSeparator,
-			...Object.entries(userData.enterprises).map(([key, fields]) => {
+			...Object.entries(userData.enterpriseFields).map(([key, fields]) => {
 				const fieldAmount = Object.values(fields).filter(
 					(x) => x.length
 				).length;

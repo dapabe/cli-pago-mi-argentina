@@ -7,10 +7,12 @@ import { UserEnterprisesFieldsSchema } from "./enterpriseFields.schema.js";
  *  On .parse, this schema should populate missing fields AND create missing ones too.
  */
 export const UserDataSchema = z.object({
-	// @ts-ignore fix `default({})` typo
-	enterprises: UserEnterprisesFieldsSchema,
+	/**
+	 *	Login form fields
+	 */
+	enterpriseFields: UserEnterprisesFieldsSchema,
 	selectedEnterprises: z.nativeEnum(Enterprises).array().default([]),
-	// payMethods:
+	// paymentMethods:
 });
 
 export type IUserData = z.TypeOf<typeof UserDataSchema>;

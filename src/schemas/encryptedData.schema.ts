@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { PasswordByteLength } from "../common/constants.js";
+import { ZodSemverUnbranded } from "zod-semver";
 
 export const EncryptedDataSchema = z.object({
-	salt: z.string().length(PasswordByteLength),
-	iv: z.string().length(PasswordByteLength),
+	version: ZodSemverUnbranded,
+	salt: z.string(),
 	encryptedData: z.string(),
 });
 
