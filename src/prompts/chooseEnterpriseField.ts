@@ -1,5 +1,4 @@
 import { select } from "@inquirer/prompts";
-import { UserJsonPath } from "../common/constants.js";
 import { IEnterprises, IUserAction } from "../common/types.js";
 import { defaultSeparator } from "../common/utils.js";
 import { IEnterpriseFields } from "../schemas/enterpriseFields.schema.js";
@@ -13,7 +12,7 @@ export async function chooseEnterpriseField(
 		field === "password" ? "Contraseña" : "Usuario";
 
 	return select<keyof IEnterpriseFields | Extract<IUserAction, "exit">>({
-		message: `Editando usuario de '${enterprise}' - Recuerda que tus datos estan guardados en '${UserJsonPath}'`,
+		message: `Editando usuario de '${enterprise}' - Recuerda que tus datos son encriptados, para mas seguridad.'`,
 		choices: [
 			{
 				name: "Volver",
