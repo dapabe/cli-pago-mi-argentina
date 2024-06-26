@@ -1,7 +1,7 @@
 /**
- * 	Current supported enterprises to login to.
+ * 	Current supported services to login to.
  */
-export const Enterprises = {
+export const SupportedServices = {
 	Aysa: "Aysa",
 	Edesur: "Edesur",
 	Telecentro: "Telecentro",

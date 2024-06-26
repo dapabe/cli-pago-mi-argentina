@@ -2,20 +2,19 @@ import { Browser, BrowserContext, Page, chromium } from "@playwright/test";
 import { createSpinner } from "nanospinner";
 import fs from "node:fs/promises";
 import { getDefaultsForSchema } from "zod-defaults";
-import { EnterprisePages } from "./common/constants/enterprise-pages.js";
 import { LoginFields } from "./common/constants/login-fields.js";
+import { ServicePages } from "./common/constants/service-pages.js";
 import { StepsToLastBill } from "./common/constants/steps-to-last-bill.js";
 import { StepsToLogin } from "./common/constants/steps-to-login.js";
 import { StepsToPay } from "./common/constants/steps-to-pay.js";
 import { encryptData } from "./common/crypto.js";
 import { UserJsonPath } from "./common/file.js";
-import { IEnterprises } from "./common/types.js";
+import { IServices } from "./common/types.js";
 import { printChalk, retrieveFromSelectedFilledForms } from "./common/utils.js";
+import { addServicePrompt } from "./prompts/addService.prompt.js";
 import { changePasswordPrompt } from "./prompts/changePassword.prompt.js";
-import { checkboxEnterprises } from "./prompts/checkboxEnterprises.js";
 import { chooseEditAction } from "./prompts/chooseEditAction.js";
 import { decryptPrompt } from "./prompts/decrypt.prompt.js";
-import { editEnterpriseFieldLoop } from "./prompts/editEnterpriseField.loop.js";
 import { firstTimePrompt } from "./prompts/firstTime.prompt.js";
 import { navigateOnContextPrompt } from "./prompts/navigateOnContext.prompt.js";
 import { EncryptedDataSchema } from "./schemas/encryptedData.schema.js";
@@ -26,7 +25,7 @@ export class PromptSequence {
 	private static PASS: string | null = null;
 	private static BROWSER: Browser | null = null;
 	private static CTX: BrowserContext | null = null;
-	private static CURRENT_WEBS = new Map<IEnterprises, Page>();
+	private static CURRENT_WEBS = new Map<IServices, Page>();
 
 	static async validateBaseFile(): Promise<void> {
 		try {
@@ -76,15 +75,10 @@ export class PromptSequence {
 			switch (action) {
 				case "next":
 					return await Promise.resolve();
-				case "enterpriseFields":
-					await editEnterpriseFieldLoop(this.DATA!);
+				case "serviceFields":
+					await addServicePrompt(this.DATA!);
 					await this.save();
 					return this.selectEditAction();
-				case "selectedEnterprises":
-					const checkedEnterprises = await checkboxEnterprises(this.DATA!);
-					this.DATA!.selectedEnterprises = checkedEnterprises;
-					await this.save();
-					return await this.selectEditAction();
 				// case "paymentMethods":
 				// 	return await Promise.reject();
 				case "password":
@@ -137,29 +131,29 @@ export class PromptSequence {
 	}
 
 	private static async isPageAvailable(
-		enterprise: IEnterprises
+		service: IServices
 	): Promise<Page | null> {
-		const spinner = createSpinner(`Navegando a ${enterprise}`, {
+		const spinner = createSpinner(`Navegando a ${service}`, {
 			color: "yellow",
 		});
 		try {
 			const page = await this.CTX!.newPage();
-			await page.goto(EnterprisePages[enterprise]);
+			await page.goto(ServicePages[service]);
 
-			if (StepsToLogin[enterprise] !== undefined) {
-				for await (const step of StepsToLogin[enterprise]!) {
+			if (StepsToLogin[service] !== undefined) {
+				for await (const step of StepsToLogin[service]!) {
 					const element = page.locator(step);
 					await element.waitFor();
 					await element.click();
 				}
 			}
-			spinner.success({ text: `${enterprise} abierto correctamente` });
+			spinner.success({ text: `${service} abierto correctamente` });
 
 			return page;
 		} catch (error) {
 			printChalk.error(error);
 			spinner.stop({
-				text: `Al parecer ${enterprise} no esta disponible`,
+				text: `Al parecer ${service} no esta disponible`,
 				color: "red",
 			});
 
@@ -171,13 +165,13 @@ export class PromptSequence {
 
 	private static async navigateToDashboard(
 		page: Page,
-		enterprise: IEnterprises
+		service: IServices
 	): Promise<void> {
-		const spinner = createSpinner(`Entrando a ${enterprise}..`, {
+		const spinner = createSpinner(`Entrando a ${service}..`, {
 			color: "yellow",
 		});
-		const field = LoginFields[enterprise];
-		const fieldData = this.DATA!.enterpriseFields[enterprise];
+		const field = LoginFields[service];
+		const fieldData = this.DATA!.serviceFields[service]!;
 
 		try {
 			const userInput = page.locator(field.username);
@@ -191,7 +185,8 @@ export class PromptSequence {
 			const submit = page.locator(field.submit);
 			await submit.waitFor();
 			await submit.click();
-			spinner.success({ text: `Logeado en '${enterprise}' correctamente.` });
+
+			spinner.success({ text: `Logeado en '${service}' correctamente.` });
 		} catch (error) {
 			spinner.error({
 				text: `Ha ocurrido un error al logearse. \n ${JSON.stringify(error)}`,
@@ -206,7 +201,7 @@ export class PromptSequence {
 	static async waitForUserActionOnContext(): Promise<void> {
 		try {
 			const answer = await navigateOnContextPrompt(
-				Object.keys(this.CURRENT_WEBS) as IEnterprises[]
+				Object.keys(this.CURRENT_WEBS) as IServices[]
 			);
 			switch (answer) {
 				case "all":
@@ -228,34 +223,29 @@ export class PromptSequence {
 		}
 	}
 
-	private static async lookUpBill(
-		enterprise: IEnterprises
-	): Promise<string | null> {
+	private static async lookUpBill(service: IServices) {
 		try {
-			const page = this.CURRENT_WEBS.get(enterprise)!;
-			const tempArr = Object.values(StepsToLastBill[enterprise]);
-			let bill = "";
+			const page = this.CURRENT_WEBS.get(service)!;
+			const tempArr = Object.values(StepsToLastBill[service]);
 
 			for (let i = 0; i <= tempArr.length; ++i) {
 				const element = page.locator(tempArr[i]);
 				await element.waitFor();
 				if (i === tempArr.length) {
-					bill = await element.innerHTML();
+					return await element.innerHTML();
 				}
 				await element.click();
 			}
-
-			return bill;
 		} catch (error) {
 			printChalk.error(error);
 			return null;
 		}
 	}
 
-	private static async navigateToPayForm(enterprise: IEnterprises) {
+	private static async navigateToPayForm(service: IServices) {
 		try {
-			const page = this.CURRENT_WEBS.get(enterprise)!;
-			for (const step of Object.values(StepsToPay[enterprise])) {
+			const page = this.CURRENT_WEBS.get(service)!;
+			for (const step of Object.values(StepsToPay[service])) {
 				const element = page.locator(step);
 				await element.waitFor();
 				await element.click();

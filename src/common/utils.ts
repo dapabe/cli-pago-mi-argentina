@@ -1,19 +1,24 @@
 import { Separator } from "@inquirer/select";
 import chalk from "chalk";
-import { EnterpriseFields } from "../schemas/enterpriseFields.schema.js";
+import { ServiceLoginFields } from "../schemas/enterpriseFields.schema.js";
 import { IUserData } from "../schemas/userData.schema.js";
+import { IServices } from "./types.js";
 
 export const defaultSeparator = new Separator("-----------------");
 
-export const requiredFieldAmount = Object.keys(EnterpriseFields.shape).length;
+export const requiredFieldAmount = Object.keys(
+	ServiceLoginFields.unwrap().shape
+).length;
 
 export const sleep = async (ms: number = 2000) =>
 	new Promise((_) => setTimeout(_, ms));
 
-export function retrieveFromSelectedFilledForms(userData: IUserData) {
-	return userData.selectedEnterprises.filter((x) =>
-		Object.values(userData.enterpriseFields[x]).every(Boolean)
-	);
+export function retrieveFromSelectedFilledForms(
+	userData: IUserData
+): IServices[] {
+	return Object.entries(userData.serviceFields)
+		.filter(([_, fields]) => Object.values(fields).every(Boolean))
+		.map((x) => x[0] as IServices);
 }
 
 export const printChalk = {

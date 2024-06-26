@@ -1,8 +1,8 @@
 import { StepsToAnything } from "../types.js";
-import { Enterprises } from "./enterprises.js";
+import { SupportedServices } from "./services.js";
 
 export const StepsToPay: Required<StepsToAnything> = {
-	[Enterprises.Aysa]: [],
-	[Enterprises.Edesur]: [],
-	[Enterprises.Telecentro]: ["div.hidden button[type=button]"],
+	[SupportedServices.Aysa]: [],
+	[SupportedServices.Edesur]: [],
+	[SupportedServices.Telecentro]: ["div.hidden button[type=button]"],
 };

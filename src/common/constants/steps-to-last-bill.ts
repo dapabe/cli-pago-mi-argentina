@@ -1,11 +1,11 @@
 import { StepsToAnything } from "../types.js";
-import { Enterprises } from "./enterprises.js";
+import { SupportedServices } from "./services.js";
 
 /**
  * 	The last step MUST contain the innerHTML of the bill amount.
  */
 export const StepsToLastBill: Required<StepsToAnything> = {
-	[Enterprises.Aysa]: [],
-	[Enterprises.Edesur]: [],
-	[Enterprises.Telecentro]: [],
+	[SupportedServices.Aysa]: [],
+	[SupportedServices.Edesur]: [],
+	[SupportedServices.Telecentro]: [],
 };

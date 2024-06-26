@@ -1,23 +1,25 @@
 import { z } from "zod";
-import { Enterprises } from "../common/constants/enterprises.js";
+import { SupportedServices } from "../common/constants/services.js";
 
 const S = z.string().default("");
-export const EnterpriseFields = z.object({
-	username: S,
-	password: S,
-});
+export const ServiceLoginFields = z
+	.object({
+		username: S,
+		password: S,
+	})
+	.optional();
 
 /**
- * 	Find a way to create this object exponentially as `Enterprises` \
+ * 	Find a way to create this object exponentially as `SupportedServices` \
  * 	grows that is type safe.
  */
-export const UserEnterprisesFieldsSchema = z.object({
-	[Enterprises.Aysa]: EnterpriseFields,
-	[Enterprises.Edesur]: EnterpriseFields,
-	[Enterprises.Telecentro]: EnterpriseFields,
-});
+export const UserServicesFieldsSchema = z
+	.object({
+		[SupportedServices.Aysa]: ServiceLoginFields,
+		[SupportedServices.Edesur]: ServiceLoginFields,
+		[SupportedServices.Telecentro]: ServiceLoginFields,
+	})
+	.default({});
 
-export type IEnterpriseFields = z.TypeOf<typeof EnterpriseFields>;
-export type IUserEnterprisesFields = z.TypeOf<
-	typeof UserEnterprisesFieldsSchema
->;
+export type IServiceLoginFields = z.TypeOf<typeof ServiceLoginFields>;
+export type IUserServicesFields = z.TypeOf<typeof UserServicesFieldsSchema>;

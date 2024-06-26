@@ -1,9 +1,9 @@
 import { select } from "@inquirer/prompts";
-import { IEnterprises, IPromptAction } from "../common/types.js";
+import { IPromptAction, IServices } from "../common/types.js";
 import { defaultSeparator } from "../common/utils.js";
 
-export async function navigateOnContextPrompt(availableWebs: IEnterprises[]) {
-	return select<Exclude<IPromptAction, "next"> | "all" | IEnterprises>({
+export async function navigateOnContextPrompt(availableWebs: IServices[]) {
+	return select<Exclude<IPromptAction, "next"> | "all" | IServices>({
 		message:
 			"¿Que pagaras hoy? - Luego de cada acción se mostrara el monto pagado.",
 		choices: [

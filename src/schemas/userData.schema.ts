@@ -1,6 +1,5 @@
 import { z } from "zod";
-import { Enterprises } from "../common/constants/enterprises.js";
-import { UserEnterprisesFieldsSchema } from "./enterpriseFields.schema.js";
+import { UserServicesFieldsSchema } from "./enterpriseFields.schema.js";
 
 /**
  *  TODO: fix this.
@@ -10,8 +9,7 @@ export const UserDataSchema = z.object({
 	/**
 	 *	Login form fields
 	 */
-	enterpriseFields: UserEnterprisesFieldsSchema,
-	selectedEnterprises: z.nativeEnum(Enterprises).array().default([]),
+	serviceFields: UserServicesFieldsSchema,
 	// paymentMethods:
 });
 

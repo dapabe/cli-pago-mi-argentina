@@ -1,8 +1,8 @@
-import { Enterprises } from "./enterprises.js";
+import { SupportedServices } from "./services.js";
 
 /**
  *  Selectors for pay fields
  */
 export const PayFields = {
-	[Enterprises.Telecentro]: {},
+	[SupportedServices.Telecentro]: {},
 } as const;
