@@ -1,6 +1,8 @@
 import { StepsToAnything } from "../types.js";
-import { EnterprisePages } from "./enterprise-pages.js";
+import { Enterprises } from "./enterprises.js";
 
-export const StepsToPay: StepsToAnything = {
-	[EnterprisePages.Telecentro]: ["div.hidden button[type=button]"],
+export const StepsToPay: Required<StepsToAnything> = {
+	[Enterprises.Aysa]: [],
+	[Enterprises.Edesur]: [],
+	[Enterprises.Telecentro]: ["div.hidden button[type=button]"],
 };

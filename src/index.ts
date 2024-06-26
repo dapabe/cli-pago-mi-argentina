@@ -5,3 +5,4 @@ import { PromptSequence } from "./PromptSequence.js";
 await PromptSequence.validateBaseFile();
 await PromptSequence.selectEditAction();
 await PromptSequence.checkUserPages();
+await PromptSequence.waitForUserActionOnContext();

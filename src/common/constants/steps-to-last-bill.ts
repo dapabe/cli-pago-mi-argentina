@@ -2,9 +2,10 @@ import { StepsToAnything } from "../types.js";
 import { Enterprises } from "./enterprises.js";
 
 /**
- * 	Some pages wont show the most recent bill so instead \
- * 	a couple of steps must be followed first.
+ * 	The last step MUST contain the innerHTML of the bill amount.
  */
-export const StepsToLastBill: StepsToAnything = {
+export const StepsToLastBill: Required<StepsToAnything> = {
+	[Enterprises.Aysa]: [],
+	[Enterprises.Edesur]: [],
 	[Enterprises.Telecentro]: [],
 };

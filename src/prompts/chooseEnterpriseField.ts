@@ -1,5 +1,5 @@
 import { select } from "@inquirer/prompts";
-import { IEnterprises, IUserAction } from "../common/types.js";
+import { IEnterprises, IPromptAction } from "../common/types.js";
 import { defaultSeparator } from "../common/utils.js";
 import { IEnterpriseFields } from "../schemas/enterpriseFields.schema.js";
 import { IUserData } from "../schemas/userData.schema.js";
@@ -11,7 +11,7 @@ export async function chooseEnterpriseField(
 	const translatedInput = (field: string) =>
 		field === "password" ? "Contraseña" : "Usuario";
 
-	return select<keyof IEnterpriseFields | Extract<IUserAction, "exit">>({
+	return select<keyof IEnterpriseFields | Extract<IPromptAction, "exit">>({
 		message: `Editando usuario de '${enterprise}' - Recuerda que tus datos son encriptados, para mas seguridad.'`,
 		choices: [
 			{

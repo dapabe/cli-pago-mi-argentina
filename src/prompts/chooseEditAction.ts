@@ -1,12 +1,12 @@
 import { select } from "@inquirer/prompts";
-import { IEditAction, IUserAction } from "../common/types.js";
+import { IEditAction, IPromptAction } from "../common/types.js";
 import { defaultSeparator } from "../common/utils.js";
 import { IUserData } from "../schemas/userData.schema.js";
 
 export async function chooseEditAction(userData: IUserData) {
 	const noEnterprises = !userData.selectedEnterprises.length;
 
-	return select<Exclude<IUserAction, "back"> | IEditAction | "password">({
+	return select<Exclude<IPromptAction, "back"> | IEditAction | "password">({
 		message: "¿Qué quieres hacer?",
 		default: "next",
 		choices: [
